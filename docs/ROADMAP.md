@@ -17,6 +17,7 @@ Source of truth for progress. 12 phases after Phase 0. Tags: **(S)** = owner tas
 | 10 | Automation | ⬜ |
 | 11 | First real week (first pilot brand) | ⬜ |
 | 12 | Open source and CV | ⬜ |
+| 13 | Native install and desktop app | ⬜ |
 
 ## Stariance MVP alignment (November 2026)
 
@@ -24,20 +25,24 @@ Stagorix is the open-source video engine of **Stariance**, a growth studio for b
 
 | MVP phase | Dates (est.) | Stagorix tasks | New work |
 | --- | --- | --- | --- |
-| A · Engine bridge | 23–29 Nov | 3.6 | `Edit` composition (edit plan + footage + cuts + captions → video); aspect ratio as a parameter |
+| 0 · Hygiene | before A | — | Secret scanning, attribution check, `ASSETS.md`, dependency license check, branch protection (S) |
+| A · Engine bridge | 23–29 Nov | 3.6 | `Edit` composition (edit plan + footage + cuts + captions → video); aspect ratio as a parameter; renderer interface; time measurement |
 | B · Brand core | 30 Nov–6 Dec | 4.1, 4.3, 8.1 | Profile = personality → style → pack; looks become styles; rule-based edit v0 |
 | C · Brain + assembly | 7–13 Dec | 5.1, 5.5, 5.6, 6.1 | Multi-clip assembly (order, best take, audio/colour matching) |
-| D · Format range | 14–20 Dec | 8.2, 8.4 | 16:9 (three base layouts first), cover image, text outputs |
-| E · App layer | 21–27 Dec | 4.2, 6.2–6.4 | Move to the Stariance repository |
-| F · Quality and release | 28–31 Dec | 4.6, 8.5, 12.1 | First pack set, 12 format cards (5.8, narrowed) |
+| D · Format range | 14–20 Dec | 8.2, 8.4 | 16:9 (three base layouts first, own safe area), cover image (strongest settled frame, also placed at frame 0), share text (1–3 sentences) |
+| E · App layer | 21–27 Dec | 4.2, 6.2–6.4 | In `apps/stariance/`: wizard, pack recommendation, approval, preview, before/after, basic Insight |
+| F · Quality and release | 28–31 Dec | 4.6, 8.5, 12.1 | First pack set (~10 styles), 12 format cards, quality gates v1 with a quality report, Docker install, demo |
+| R · Research (parallel) | 30 Nov–20 Dec | 5.8 (narrowed) | 12 format cards with data, brand growth rules |
 
-Later: 3.5b, 4.4, phase 7, 9, 10, 11. Dropped from the MVP: news agents 5.2–5.4. Option targets below are under review: they move from counts to quality targets.
+Later: 3.5b, 4.4, phase 7, 9, 10, 11, 13. Dropped from the MVP: news agents 5.2–5.4. The counts under Option targets are upper bounds for later releases, not goals: the MVP aims at quality (12 core formats, about 10 crafted styles).
+
+Ideas from the source review (project docs, not scheduled): plan file with storyboard timings and beat-aligned cuts, sound metadata for automatic sound choice (brightness, high-frequency risk, transient), music beat analysis, model router with a semantic cache, trend research for Insight, a product or site launch pack.
 
 ## Milestones
 
 | Milestone | What the user gets | Done when |
 | --- | --- | --- |
-| **MVP** | Own raw video → cut, captioned, effect-rich, branded vertical Short, with approval | Phase 3, the core of 4.1 and 8.1 |
+| **MVP** (31 Dec 2026) | From the brand wizard to a first video in the panel: own clips, a long recording or a finished video → cut, captioned, branded video in 9:16 and 16:9 with cover and text, pack recommendation, approval, preview, before/after, basic Insight | MVP phases 0, A–F and R above |
 | **v1** | Every option dimension at its v1 target, three-layer choice, option review gate passed | End of phase 8 (8.5) |
 | **Pro** | Every option dimension at its Pro target, publishing and automation | End of phase 12 |
 
@@ -47,7 +52,7 @@ The user chooses from a rich, curated catalog; nothing is locked (filters are a 
 
 | Dimension | v1 | Pro | Task |
 | --- | --- | --- | --- |
-| Content formats | 20 | 25+ | 5.8 |
+| Content formats | 12 (core) | 25+ | 5.8 |
 | Hook types | 20 | 30+ | 5.8 |
 | Looks (style packs) | 10 | 15+ | 4.3 |
 | Font pairs (OFL) | 20 | 30+ | 4.6 |
@@ -113,7 +118,7 @@ After the option review gate, requests stay open for good: each wish becomes a n
 - [ ] 3.5 New effects: list cards, progress bar, phone mock-up, orbit, pull-back, zoom-through, vertigo, UI/diagram scenes, logo stack (logos supplied by the user, none bundled), word-synced kinetic typography (C)
   - [x] 3.5a Camera moves: orbit, pull-back, zoom-through, vertigo (depth layers: background and speaker move separately)
   - [ ] 3.5b Progress bar, UI/diagram scene, logo stack, word-synced kinetic typography
-- [ ] 3.6 Draft render for previews (540p, lower frame rate, ~4× faster on CPU) and final render only after approval, −14 LUFS; a thin renderer interface so Remotion can be swapped (C)
+- [ ] 3.6 Draft render for previews (540p, lower frame rate, ~4× faster on CPU) and final render only after approval, −14 LUFS; a thin renderer interface so Remotion can be swapped (C); time analysis, draft and final render on a 60 s clip and log the result in `DECISIONS.md` (C)
 
 ## Phase 4 — Brand system
 
@@ -138,7 +143,7 @@ After the option review gate, requests stay open for good: each wish becomes a n
 - [ ] 5.5 Editor agent (edit plan) (C); free-text feedback ("too many zooms") becomes a proposed profile change, applied only after approval
 - [ ] 5.6 Visual QA agent (`qa-frames`) with a scoring rubric (C)
 - [ ] 5.7 Project skills: `edit-raw-video`, `news-short`, `extract-style`, `qa-frames` (C)
-- [ ] 5.8 Format and hook library: 20 proven short-form formats, 20 hook types, researched with sources (C), approval (S)
+- [ ] 5.8 Format library: 12 core formats as cards (structure, hook, sample videos, sources), more later (C), approval (S)
 
 ## Phase 6 — Control panel
 
@@ -195,3 +200,10 @@ After the option review gate, requests stay open for good: each wish becomes a n
 - [ ] 12.2 Scoring evaluation report (C)
 - [ ] 12.3 DaVinci export, optional (C)
 - [ ] 12.4 CV and LinkedIn copy (C)
+
+## Phase 13 — Native install and desktop app
+
+- [ ] 13.1 Native install script with dependency checks on macOS, Windows and Linux; Docker optional and test-only (C)
+- [ ] 13.2 macOS and Windows CI run the native install step for step, then structural golden checks (C)
+- [ ] 13.3 Desktop app with a setup wizard on the same core as the CLI (C)
+- [ ] 13.4 Real install test on each OS (S)
