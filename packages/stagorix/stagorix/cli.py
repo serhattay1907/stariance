@@ -141,6 +141,41 @@ def showcase(
     console.print(f"[green]Done:[/] {path}")
 
 
+@app.command("render")
+def render_cmd(
+    plan_file: Annotated[Path, typer.Argument(help="Edit plan JSON.", exists=True, dir_okay=False)],
+    aspect: Annotated[str, typer.Option("--aspect", "-a", help="9:16 (vertical) or 16:9.")] = "9:16",
+    quality: Annotated[
+        str, typer.Option("--quality", "-q", help="draft (540p, 15 fps, fast) or final (−14 LUFS).")
+    ] = "draft",
+    out: Annotated[Path | None, typer.Option("--out", help="Output video.")] = None,
+    browser: Annotated[
+        str | None,
+        typer.Option("--browser-executable", help="Use this Chrome/Chromium instead of Remotion's."),
+    ] = None,
+) -> None:
+    """Render an edit plan over your footage: cuts, captions, effects and sound."""
+    from stagorix.analysis.media import MediaError
+    from stagorix.render.edit import Aspect, EditError, render_edit
+    from stagorix.render.renderer import Quality
+    from stagorix.verify import VerifyError
+
+    try:
+        a, q = Aspect(aspect), Quality(quality)
+    except ValueError as exc:
+        console.print(f"[red]{exc}[/]: aspect is 9:16 or 16:9, quality is draft or final")
+        raise typer.Exit(code=1) from None
+    target = out or Path("workspace") / "renders" / f"{plan_file.stem}-{a.value.replace(':', 'x')}-{q}.mp4"
+    try:
+        with console.status(f"Rendering {a} {q} …"):
+            result = render_edit(plan_file, target, a, q, browser)
+    except (EditError, MediaError, VerifyError) as exc:
+        console.print(f"[red]Render failed:[/] {exc}")
+        raise typer.Exit(code=1) from exc
+    loud = f" · {result.lufs} LUFS" if result.lufs is not None else ""
+    console.print(f"[green]Done[/] in {result.seconds:.0f}s ({result.renderer}{loud}): {result.path}")
+
+
 @app.command()
 def looks(
     render: Annotated[bool, typer.Option("--render", help="Render every look into one reel video.")] = False,

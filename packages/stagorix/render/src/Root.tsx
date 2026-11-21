@@ -1,4 +1,5 @@
 import { Composition } from "remotion";
+import { Edit, editMetadata, editSchema } from "./compositions/Edit";
 import { Placeholder, placeholderSchema } from "./compositions/Placeholder";
 import { LAYOUT_REEL_SECONDS, LayoutReel, layoutReelSchema } from "./compositions/LayoutReel";
 import { LOOK_REEL_SECONDS, LookReel } from "./compositions/LookReel";
@@ -25,6 +26,15 @@ export const Root: React.FC = () => (
       schema={showcaseSchema}
       defaultProps={{ theme: neutralTheme, look: "", footage: "", cutoutFrames: 0, cutoutDir: "showcase-input/cutout", matteDir: "", matteFrames: 0, matteFps: 30, sounds: [] }}
       durationInFrames={VIDEO.fps * SHOWCASE_SECONDS}
+      {...VIDEO}
+    />
+    <Composition
+      id="Edit"
+      component={Edit}
+      schema={editSchema}
+      defaultProps={editSchema.parse({})}
+      calculateMetadata={editMetadata}
+      durationInFrames={VIDEO.fps * 3}
       {...VIDEO}
     />
     <Composition

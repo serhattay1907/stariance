@@ -1,0 +1,60 @@
+{
+  "duration": 14.2,
+  "look": "",
+  "sources": [
+    {
+      "id": "main",
+      "video": "../../workspace/raw.mp4",
+      "analysis": "../../workspace/analysis/raw"
+    }
+  ],
+  "segments": [
+    { "source": "main", "start": 0.0, "end": 6.0 },
+    { "source": "main", "start": 6.8, "end": 15.0 }
+  ],
+  "captions": {
+    "keywords": []
+  },
+  "effects": [
+    {
+      "effect": "title.behind",
+      "at": 0.2,
+      "seconds": 2.4,
+      "reason": "Opens with the promise of the video",
+      "params": {
+        "lines": [{ "text": "THREE STEPS" }, { "text": "THAT WORK", "accent": true }]
+      }
+    },
+    {
+      "effect": "camera.zoom",
+      "at": 3.6,
+      "seconds": 1.0,
+      "reason": "Stress on the key sentence",
+      "params": { "scale": 1.12 }
+    },
+    {
+      "effect": "camera.whip",
+      "at": 5.85,
+      "seconds": 0.35,
+      "reason": "Hides the cut between the two takes"
+    },
+    {
+      "effect": "list.checklist",
+      "at": 7.0,
+      "seconds": 3.0,
+      "reason": "Shows the steps as they are said",
+      "params": { "title": "The steps", "items": ["Plan it", "Build it", "Ship it"] }
+    },
+    {
+      "effect": "outro.card",
+      "at": 11.0,
+      "seconds": 3.2,
+      "reason": "Closing question for comments",
+      "params": {
+        "title": "Which step is hardest for you?",
+        "highlight": "hardest",
+        "cta": "Tell me below 👇"
+      }
+    }
+  ]
+}
