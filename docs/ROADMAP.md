@@ -9,7 +9,7 @@ Source of truth for progress. 12 phases after Phase 0. Tags: **(S)** = owner tas
 | 2 | Cleanup and repo skeleton | ✅ (macOS test deferred, see 2.8) |
 | 3 | Core engine | ⬜ |
 | 4 | Brand system | ⬜ |
-| 5 | Agents (LangGraph) | ⬜ |
+| 5 | Agents | ⬜ |
 | 6 | Control panel | ⬜ |
 | 7 | Asset layer | ⬜ |
 | 8 | Upload your own video | ⬜ |
@@ -134,9 +134,9 @@ After the option review gate, requests stay open for good: each wish becomes a n
 - [ ] 4.5 First profile: the first pilot brand (S provides brand info, C sets it up)
 - [ ] 4.6 Font pairs: 20 OFL pairs with Latin Extended support (C), selection (S)
 
-## Phase 5 — Agents (LangGraph)
+## Phase 5 — Agents
 
-- [ ] 5.1 LLM adapters (C)
+- [ ] 5.1 LLM adapters (C); plans come back as structured output against the `EditPlan` schema and pass `check_plan` before approval
 - [ ] 5.2 Scout + deduplication (C), source list (S)
 - [ ] 5.3 Scorer (C), score approval on 20 samples (S)
 - [ ] 5.4 Writer + verify/rewrite loop (C), tone approval (S)

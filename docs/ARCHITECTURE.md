@@ -14,7 +14,7 @@ flowchart LR
     subgraph Core["Core (brand-agnostic)"]
         direction TB
         A["Analysis<br/>Whisper · face tracking · person cutout · audio"]
-        G["Agents (LangGraph)<br/>Scout → Scorer → Writer → Editor → QA"]
+        G["Agents<br/>Editor (plan → check_plan → fix) · QA"]
         R["Render (Remotion)<br/>effect library · layouts · −14 LUFS"]
         A --> G --> R
     end
@@ -47,7 +47,7 @@ flowchart LR
 | Component | Responsibility | Tech |
 | --- | --- | --- |
 | Analysis | Word timings, flub detection, face tracking, person cutout, audio cleanup | faster-whisper, OpenCV, rembg, ffmpeg |
-| Agents | Scout (collect + dedupe), Scorer, Writer (verify/rewrite loop), Editor (edit plan), QA (`qa-frames`) | Python 3.12, LangGraph, Pydantic |
+| Agents | Scout (collect + dedupe), Scorer, Writer (verify/rewrite loop), Editor (edit plan), QA (`qa-frames`) | Python 3.12, Pydantic, LLM adapter; structured output against the `EditPlan` schema, `check_plan` gate and bounded retries (no LangGraph in the MVP) |
 | LLM adapters | One interface; Claude Code CLI, Anthropic API, OpenAI API, Ollama behind it | Provider-agnostic |
 | Render | Edit plan → video; effects and layouts as typed components | Remotion, Three.js, Zod |
 | Assets | Own files first, then free stock; license log for every asset; paid generators off by default | Pexels, Pixabay, Mixkit, LottieFiles |
