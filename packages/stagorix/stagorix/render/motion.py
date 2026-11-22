@@ -11,8 +11,9 @@ from __future__ import annotations
 
 import math
 from enum import StrEnum
+from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 BEAT = 0.3  # seconds; effects starting this close together share one beat
 
@@ -306,11 +307,66 @@ class PlannedEffect(BaseModel):
     at: float = Field(ge=0)
     seconds: float = Field(gt=0)
     reason: str = Field(min_length=1, description="Why it is here, shown to the user")
+    params: dict[str, Any] = Field(
+        default_factory=dict, description="Content of the effect (text, numbers), as its component takes it"
+    )
+
+
+class Source(BaseModel):
+    """One recording. Paths are relative to the plan file."""
+
+    id: str = Field(default="main", min_length=1)
+    video: str = Field(description="The original recording")
+    analysis: str | None = Field(
+        default=None, description="Folder written by `stagorix analyze` (transcript, 9:16 cut, voice)"
+    )
+
+
+class Segment(BaseModel):
+    """A kept piece of a source, in source seconds. Segments play one after another."""
+
+    source: str = "main"
+    start: float = Field(ge=0)
+    end: float = Field(gt=0)
+
+    @model_validator(mode="after")
+    def _ordered(self) -> Segment:
+        if self.end <= self.start:
+            raise ValueError(f"segment ends ({self.end}) before it starts ({self.start})")
+        return self
+
+
+class CaptionPlan(BaseModel):
+    """Word-timed captions from the transcript; style and position default to the look."""
+
+    enabled: bool = True
+    style: str | None = None
+    position: str | None = None
+    keywords: list[str] = Field(default_factory=list, description="Words shown in the accent colour")
+    max_words: int = Field(default=3, ge=1, le=6)
 
 
 class EditPlan(BaseModel):
+    """What the viewer sees. Effect times are output seconds (after the cuts)."""
+
     duration: float = Field(gt=0)
     effects: list[PlannedEffect]
+    sources: list[Source] = Field(default_factory=list, description="Empty for plans without footage")
+    segments: list[Segment] = Field(
+        default_factory=list, description="Kept pieces in play order; empty = the whole first source"
+    )
+    captions: CaptionPlan = Field(default_factory=CaptionPlan)
+    look: str = Field(default="", description="Ready-made look id; empty = neutral theme")
+
+    @model_validator(mode="after")
+    def _known_sources(self) -> EditPlan:
+        ids = [s.id for s in self.sources]
+        if len(set(ids)) != len(ids):
+            raise ValueError(f"source ids must be unique: {ids}")
+        missing = {seg.source for seg in self.segments} - set(ids)
+        if missing:
+            raise ValueError(f"segments name unknown sources: {sorted(missing)}")
+        return self
 
 
 class Severity(StrEnum):
@@ -396,6 +452,16 @@ def check_plan(plan: EditPlan, rules: MotionRules | None = None) -> list[Violati
             Severity.WARNING,
             f"{len(strong)} strong effects after the hook; budget for {plan.duration:.0f}s is {budget}",
         )
+
+    if plan.segments:
+        kept = sum(s.end - s.start for s in plan.segments)
+        if abs(kept - plan.duration) > 1 / 30:
+            add(
+                "timeline",
+                0,
+                Severity.ERROR,
+                f"segments keep {kept:.2f}s but the plan lasts {plan.duration:g}s",
+            )
 
     if rules.outro_required and not any(s.role is Role.OUTRO for _, s in known):
         add("outro", plan.duration, Severity.WARNING, "no outro (closing card or call to action)")

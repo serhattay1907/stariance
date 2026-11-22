@@ -211,7 +211,82 @@ def run_verify(update: bool = False, browser: str | None = None) -> list[Step]:
     steps.append(_timed("Vertical framing", check_framing))
     steps.append(_timed("Person cutout", check_cutout))
     steps.append(_timed("Voice clean-up", check_voice))
+    steps.append(_timed("Edit render", lambda: check_edit(browser)))
     return steps
+
+
+def edit_fixture(folder: Path) -> Path:
+    """A 6 s test clip with the speech sample, its analysis and a plan with two cuts; returns the plan."""
+    from stagorix.analysis.models import Transcript, Word
+    from stagorix.analysis.voice import clean_voice
+    from stagorix.render.motion import CaptionPlan, EditPlan, PlannedEffect, Segment, Source
+
+    analysis = folder / "analysis"
+    analysis.mkdir(parents=True, exist_ok=True)
+    raw = folder / "raw.mp4"
+    _run(
+        [_tool("ffmpeg"), "-v", "error", "-y", "-f", "lavfi", "-i", "testsrc2=s=1920x1080:r=30:d=6"]
+        + ["-i", str(GOLDEN_DIR / SPEECH_FIXTURE), "-shortest"]
+        + ["-c:v", "libx264", "-preset", "veryfast", "-pix_fmt", "yuv420p", "-c:a", "aac", str(raw)]
+    )
+    clean_voice(raw, analysis / "voice.wav")
+    texts = SPEECH_TEXT.split()
+    step = 5.4 / len(texts)
+    words = [
+        Word(text=w, start=round(0.3 + i * step, 3), end=round(0.3 + (i + 0.85) * step, 3), probability=1)
+        for i, w in enumerate(texts)
+    ]
+    transcript = Transcript(
+        source=raw.name, language="en", language_detected=False, model="fixture", duration=6, words=words
+    )
+    (analysis / "transcript.json").write_text(transcript.model_dump_json(), encoding="utf-8")
+    fx = lambda e, at, s, **p: PlannedEffect(effect=e, at=at, seconds=s, reason="fixture", params=p)  # noqa: E731
+    plan = EditPlan(
+        duration=4.6,
+        sources=[Source(video="raw.mp4", analysis="analysis")],
+        segments=[Segment(start=0, end=2.6), Segment(start=3.4, end=5.4)],
+        captions=CaptionPlan(keywords=["fox"]),
+        effects=[
+            fx("label", 0.2, 1.4, text="Golden edit", position="upper"),
+            fx("camera.whip", 2.45, 0.35),
+            fx("speaker.blur", 2.8, 1.5),
+            fx("outro.card", 4.0, 0.6, title="The end"),
+        ],
+    )
+    path = folder / "plan.json"
+    path.write_text(plan.model_dump_json(indent=2), encoding="utf-8")
+    return path
+
+
+def check_edit(browser: str | None = None) -> tuple[bool, str]:
+    """Plan + footage → video: a final 9:16 (30 fps, −14 LUFS) and a draft 16:9 (half size, 15 fps)."""
+    from stagorix.analysis.media import MediaError
+    from stagorix.render.edit import Aspect, EditError, render_edit
+    from stagorix.render.renderer import TARGET_LUFS, Quality
+
+    plan = edit_fixture(OUT_DIR / "edit")
+    cases = [
+        (Aspect.VERTICAL, Quality.FINAL, (1080, 1920, 30)),
+        (Aspect.LANDSCAPE, Quality.DRAFT, (960, 540, 15)),
+    ]
+    notes = []
+    ok = True
+    for aspect, quality, (w, h, fps) in cases:
+        try:
+            out = OUT_DIR / f"edit-{aspect.name.lower()}-{quality}.mp4"
+            result = render_edit(plan, out, aspect, quality, browser)
+        except (EditError, MediaError) as exc:
+            raise VerifyError(str(exc)) from exc
+        got = _probe(result.path)
+        frames = round(4.6 * fps)
+        good = (got["width"], got["height"], got["fps"], got["frames"]) == (w, h, fps, frames)
+        if result.lufs is not None:
+            good = good and abs(result.lufs - TARGET_LUFS) <= 1.0
+        ok = ok and good
+        loud = f", {result.lufs} LUFS" if result.lufs is not None else ""
+        size = f"{got['width']:g}×{got['height']:g}@{got['fps']:g}"
+        notes.append(f"{aspect} {quality} {size} {got['frames']:g}f{loud}")
+    return ok, " · ".join(notes)
 
 
 def check_cutout() -> tuple[bool, str]:

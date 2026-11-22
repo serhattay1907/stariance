@@ -6,6 +6,7 @@ fails silently (principle 3).
 
 from __future__ import annotations
 
+import subprocess
 from enum import StrEnum
 from pathlib import Path
 from typing import Annotated, NoReturn
@@ -139,6 +140,78 @@ def showcase(
         console.print(f"[red]Showcase failed:[/] {exc}")
         raise typer.Exit(code=1) from exc
     console.print(f"[green]Done:[/] {path}")
+
+
+@app.command("render")
+def render_cmd(
+    plan_file: Annotated[Path, typer.Argument(help="Edit plan JSON.", exists=True, dir_okay=False)],
+    aspect: Annotated[str, typer.Option("--aspect", "-a", help="9:16 (vertical) or 16:9.")] = "9:16",
+    quality: Annotated[
+        str, typer.Option("--quality", "-q", help="draft (540p, 15 fps, fast) or final (−14 LUFS).")
+    ] = "draft",
+    out: Annotated[Path | None, typer.Option("--out", help="Output video.")] = None,
+    browser: Annotated[
+        str | None,
+        typer.Option("--browser-executable", help="Use this Chrome/Chromium instead of Remotion's."),
+    ] = None,
+) -> None:
+    """Render an edit plan over your footage: cuts, captions, effects and sound."""
+    from stagorix.analysis.media import MediaError
+    from stagorix.render.edit import Aspect, EditError, render_edit
+    from stagorix.render.renderer import Quality
+    from stagorix.verify import VerifyError
+
+    try:
+        a, q = Aspect(aspect), Quality(quality)
+    except ValueError as exc:
+        console.print(f"[red]{exc}[/]: aspect is 9:16 or 16:9, quality is draft or final")
+        raise typer.Exit(code=1) from None
+    target = out or Path("workspace") / "renders" / f"{plan_file.stem}-{a.value.replace(':', 'x')}-{q}.mp4"
+    try:
+        with console.status(f"Rendering {a} {q} …"):
+            result = render_edit(plan_file, target, a, q, browser)
+    except (EditError, MediaError, VerifyError) as exc:
+        console.print(f"[red]Render failed:[/] {exc}")
+        raise typer.Exit(code=1) from exc
+    loud = f" · {result.lufs} LUFS" if result.lufs is not None else ""
+    console.print(f"[green]Done[/] in {result.seconds:.0f}s ({result.renderer}{loud}): {result.path}")
+
+
+@app.command()
+def bench(
+    video: Annotated[Path, typer.Argument(help="A talking-head recording.", exists=True, dir_okay=False)],
+    seconds: Annotated[float, typer.Option("--seconds", min=5, help="Length of the clip to time.")] = 60,
+    out: Annotated[Path, typer.Option("--out", help="Work folder.")] = Path("workspace/bench"),
+    skip_transcript: Annotated[bool, typer.Option("--skip-transcript", help="Time without Whisper.")] = False,
+    browser: Annotated[
+        str | None,
+        typer.Option("--browser-executable", help="Use this Chrome/Chromium instead of Remotion's."),
+    ] = None,
+) -> None:
+    """Time analysis, draft and final render of the first 60 s of a recording on this machine."""
+    from stagorix.analysis.media import MediaError
+    from stagorix.bench import run_bench
+    from stagorix.render.edit import EditError
+
+    try:
+        r = run_bench(video, out, seconds, ["--skip-transcript"] if skip_transcript else [], browser)
+    except (EditError, MediaError, subprocess.CalledProcessError) as exc:
+        console.print(f"[red]Bench failed:[/] {exc}")
+        raise typer.Exit(code=1) from exc
+    table = Table(title=f"Bench · {r.clip_seconds:g} s clip · {r.machine}")
+    for col in ("Step", "Time", "× real time"):
+        table.add_column(col)
+    for label, t in (
+        ("Analysis", r.analysis_seconds),
+        ("Draft render", r.draft_seconds),
+        ("Final render", r.final_seconds),
+    ):
+        table.add_row(label, f"{t:.0f} s", f"{t / r.clip_seconds:.1f}")
+    table.add_row("Total", f"{r.total_minutes} min", "")
+    console.print(table)
+    for note in r.notes:
+        console.print(f"[yellow]Note:[/] {note}")
+    (out / "bench.json").write_text(r.model_dump_json(indent=2), encoding="utf-8")
 
 
 @app.command()

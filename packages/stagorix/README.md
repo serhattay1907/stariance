@@ -25,6 +25,17 @@ Provider-agnostic, local-first multi-agent pipeline that turns news and your own
 | `polish` | An edited video | Same video, branded and captioned |
 | `clip` | A long video | 3–5 short candidates |
 
+## Render an edit plan
+
+An edit plan lists the pieces of your recording to keep, the captions and the effects (with a reason for each). After `stagorix analyze`, render it as a draft to review, then as the final:
+
+```bash
+uv run stagorix analyze workspace/raw.mp4                                     # transcript, 9:16 cut, voice
+uv run stagorix render examples/plans/edit-sample.json                        # draft: 540p, 15 fps
+uv run stagorix render examples/plans/edit-sample.json -q final               # 1080p, 30 fps, −14 LUFS
+uv run stagorix render examples/plans/edit-sample.json -a 16:9 -q final       # same plan, landscape
+```
+
 ## Development
 
 **With Docker (recommended, same on macOS, Windows and Linux):**

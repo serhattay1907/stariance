@@ -243,5 +243,8 @@ packages/stagorix/.claude/skills/remotion*/
 # Local footage for the showcase (never committed)
 packages/stagorix/render/public/showcase-input/
 
+# Footage, voice and mattes staged by `stagorix render` (never committed)
+packages/stagorix/render/public/edit-input/
+
 # Built sound library (`stagorix sounds build`; never committed)
 packages/stagorix/render/public/sounds/

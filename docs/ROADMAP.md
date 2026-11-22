@@ -26,7 +26,7 @@ Stagorix is the open-source video engine of **Stariance**, a growth studio for b
 | MVP phase | Dates (est.) | Stagorix tasks | New work |
 | --- | --- | --- | --- |
 | 0 · Hygiene | before A | — | Secret scanning, attribution check, `ASSETS.md`, dependency license check, branch protection (S) |
-| A · Engine bridge | 23–29 Nov | 3.6 | `Edit` composition (edit plan + footage + cuts + captions → video); aspect ratio as a parameter; renderer interface; time measurement |
+| A · Engine bridge ✅ | 23–29 Nov | 3.6 | `Edit` composition (edit plan + footage + cuts + captions → video); aspect ratio as a parameter; renderer interface; time measurement |
 | B · Brand core | 30 Nov–6 Dec | 4.1, 4.3, 8.1 | Profile = personality → style → pack; looks become styles; rule-based edit v0 |
 | C · Brain + assembly | 7–13 Dec | 5.1, 5.5, 5.6, 6.1 | Multi-clip assembly (order, best take, audio/colour matching) |
 | D · Format range | 14–20 Dec | 8.2, 8.4 | 16:9 (three base layouts first, own safe area), cover image (strongest settled frame, also placed at frame 0), share text (1–3 sentences) |
@@ -118,7 +118,14 @@ After the option review gate, requests stay open for good: each wish becomes a n
 - [ ] 3.5 New effects: list cards, progress bar, phone mock-up, orbit, pull-back, zoom-through, vertigo, UI/diagram scenes, logo stack (logos supplied by the user, none bundled), word-synced kinetic typography (C)
   - [x] 3.5a Camera moves: orbit, pull-back, zoom-through, vertigo (depth layers: background and speaker move separately)
   - [ ] 3.5b Progress bar, UI/diagram scene, logo stack, word-synced kinetic typography
-- [ ] 3.6 Draft render for previews (540p, lower frame rate, ~4× faster on CPU) and final render only after approval, −14 LUFS; a thin renderer interface so Remotion can be swapped (C); time analysis, draft and final render on a 60 s clip and log the result in `DECISIONS.md` (C)
+- [x] 3.6 Draft render for previews (540p, lower frame rate, ~4× faster on CPU) and final render only after approval, −14 LUFS; a thin renderer interface so Remotion can be swapped (C); time analysis, draft and final render on a 60 s clip and log the result in `DECISIONS.md` (C)
+  - [x] `Edit` composition: edit plan + footage + cuts + captions → video (`stagorix render <plan>`); sources, segments, captions and effect `params` in the plan; every catalog effect drawn
+  - [x] Aspect ratio as a render parameter (`--aspect 9:16|16:9`); per-effect 16:9 tuning stays in MVP phase D
+  - [x] Draft (half size, 15 fps, fast encoder; measured ~3× faster than final on a 4.6 s test edit) and final (30 fps, whole mix to −14 LUFS, true peak ≤ −1 dBTP); `Renderer` interface with `RemotionRenderer`
+  - [x] Golden test: `verify` renders a fixture edit (final 9:16 and draft 16:9) and checks size, frame rate, frame count and loudness
+  - [x] Time measurement: `stagorix bench <video>` times analysis, draft and final on the first 60 s; reference run logged in `DECISIONS.md` (2026-11-22)
+  - [x] Clean plate behind the speaker in `Edit` too (speaker effects and camera moves), as in the showcase
+  - [ ] Pixel references for `Edit` stills (needs a Docker `verify --update` run with a fixed footage fixture)
 
 ## Phase 4 — Brand system
 
