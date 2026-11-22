@@ -7,12 +7,12 @@ license = "MIT"
 requires-python = ">=3.12,<3.13"
 dependencies = [
     "faster-whisper==1.2.1",
-    "numpy==2.5.4",
-    "onnxruntime==1.31.1",
-    "opencv-python-headless==5.0.0.93",
-    "pydantic==2.14.1",
+    "numpy==2.5.5",
+    "onnxruntime==1.32.0",
+    "opencv-python-headless==5.1.0.95",
+    "pydantic==2.14.3",
     "rich==15.0.0",
-    "typer==0.27.3",
+    "typer==0.29.2",
 ]
 
 [project.scripts]
@@ -21,7 +21,7 @@ stagorix = "stagorix.cli:app"
 [dependency-groups]
 dev = [
     "pytest==9.2.0",
-    "ruff==0.17.3",
+    "ruff==0.17.5",
 ]
 
 [build-system]

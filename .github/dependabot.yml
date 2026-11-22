@@ -23,8 +23,13 @@ updates:
       # Remotion packages must move together, in one PR.
       remotion:
         patterns: ["remotion", "@remotion/*"]
+      # React, its DOM renderer and its types only work at the same major.
+      react:
+        patterns: ["react", "react-dom", "@types/react"]
       npm-minor-patch:
         update-types: [minor, patch]
+        exclude-patterns: ["remotion", "@remotion/*", "react", "react-dom", "@types/react"]
     ignore:
-      # zod is pinned to the version Remotion itself uses (see DECISIONS 2026-10-29).
+      # zod is pinned to the version Remotion itself uses (see DECISIONS 2026-10-29);
+      # bump it by hand with every Remotion update (`npm ls zod` must show one version).
       - dependency-name: zod
