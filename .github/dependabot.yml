@@ -8,3 +8,23 @@ updates:
     directory: /packages/stagorix
     schedule:
       interval: monthly
+  - package-ecosystem: uv
+    directory: /packages/stagorix
+    schedule:
+      interval: monthly
+    groups:
+      python-minor-patch:
+        update-types: [minor, patch]
+  - package-ecosystem: npm
+    directory: /packages/stagorix/render
+    schedule:
+      interval: monthly
+    groups:
+      # Remotion packages must move together, in one PR.
+      remotion:
+        patterns: ["remotion", "@remotion/*"]
+      npm-minor-patch:
+        update-types: [minor, patch]
+    ignore:
+      # zod is pinned to the version Remotion itself uses (see DECISIONS 2026-10-29).
+      - dependency-name: zod

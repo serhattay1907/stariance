@@ -1,6 +1,6 @@
 # Stagorix
 
-Provider-agnostic, local-first multi-agent pipeline that turns news and your own videos into branded, captioned vertical videos for YouTube Shorts and Instagram Reels (LangGraph + Whisper + Remotion).
+Provider-agnostic, local-first multi-agent pipeline that turns news and your own videos into branded, captioned vertical videos for YouTube Shorts and Instagram Reels (Whisper + Remotion).
 
 > **Status:** early development (Phase 2 of 12). Not usable yet. See the [roadmap](../../docs/ROADMAP.md).
 

@@ -5,6 +5,7 @@ import {
   continueRender,
   delayRender,
   Html5Audio,
+  Img,
   OffthreadVideo,
   Sequence,
   staticFile,
@@ -15,7 +16,7 @@ import { z } from "zod";
 import { Badge } from "../effects/Badge";
 import { BarChart } from "../effects/BarChart";
 import { Camera, WhipFlash } from "../effects/Camera";
-import { MoveLayer, ZoomThroughFlash } from "../effects/CameraMove";
+import { MoveLayer, useCameraMove, ZoomThroughFlash } from "../effects/CameraMove";
 import { Captions } from "../effects/Captions";
 import { Checklist } from "../effects/Checklist";
 import { EmojiPop } from "../effects/EmojiPop";
@@ -26,7 +27,7 @@ import { LineChart } from "../effects/LineChart";
 import { NumberPop } from "../effects/NumberPop";
 import { Outro } from "../effects/Outro";
 import { QuoteBubbles } from "../effects/QuoteBubbles";
-import { SpeakerBackdrop, SpeakerPerson } from "../effects/SpeakerFx";
+import { SpeakerBackdrop, SpeakerPerson, useSpeakerFx } from "../effects/SpeakerFx";
 import { Spotlight } from "../effects/Spotlight";
 import { StatRow } from "../effects/StatRow";
 import { Timeline as TimelineCard } from "../effects/Timeline";
@@ -52,6 +53,7 @@ const sourceSchema = z.object({
   matteDir: z.string().default("").describe("Person mattes (one PNG per source frame); empty = none"),
   matteFps: z.number().positive().default(30),
   matteFrames: z.number().int().min(0).default(0),
+  plate: z.string().default("").describe("Clean plate: the background without the speaker"),
 });
 const pieceSchema = z.object({
   source: z.string(),
@@ -223,6 +225,13 @@ const Scene: React.FC<z.infer<typeof editSchema> & { tl: Timeline }> = ({ source
   const matted = pieces.some((p) => sources[p.source]?.matteDir);
   const titles = tl.overlays.filter((o) => o.kind === "title");
   const rest = tl.overlays.filter((o) => o.kind !== "title");
+  // While the speaker is on its own layer, the background is the clean plate (as in the
+  // showcase), so a blurred or moving background shows no halo or ghost of the speaker.
+  const fx = useSpeakerFx(tl.speaker);
+  const move = useCameraMove(tl.moves);
+  const separated = Boolean((fx && fx.kind !== "swap") || (move && move.kind !== "zoomthrough"));
+  const background = (p: Piece, s: Source) =>
+    separated && s.plate ? <Img src={staticFile(s.plate)} style={fit(s)} /> : <Clip piece={p} source={s} />;
   const person = (
     <Pieces pieces={pieces} sources={sources} render={(p, s) => (s.matteDir ? <PersonClip piece={p} source={s} /> : null)} />
   );
@@ -232,7 +241,7 @@ const Scene: React.FC<z.infer<typeof editSchema> & { tl: Timeline }> = ({ source
         <Camera {...camera}>
           <MoveLayer items={tl.moves} origin={face} layer="background">
             <SpeakerBackdrop items={tl.speaker}>
-              <Pieces pieces={pieces} sources={sources} render={(p, s) => <Clip piece={p} source={s} />} />
+              <Pieces pieces={pieces} sources={sources} render={background} />
             </SpeakerBackdrop>
           </MoveLayer>
         </Camera>

@@ -145,3 +145,12 @@ def test_sample_edit_plan_is_valid() -> None:
     plan = EditPlan.model_validate_json(text)
     assert plan.sources and plan.segments
     assert [v for v in check_plan(plan) if v.severity == "error"] == []
+
+
+def test_bench_plan_is_valid_for_any_clip_length() -> None:
+    from stagorix.bench import bench_plan
+
+    for seconds in (10, 60):
+        plan = bench_plan(seconds)
+        assert [v for v in check_plan(plan) if v.severity == "error"] == []
+        assert all(e.at < seconds for e in plan.effects)

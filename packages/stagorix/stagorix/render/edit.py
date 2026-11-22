@@ -244,7 +244,7 @@ def build_props(
 ) -> dict[str, Any]:
     """Stage footage, voice and mattes under render/public and return the Edit props."""
     from stagorix.analysis.matte import Quality as MatteQuality
-    from stagorix.analysis.matte import write_mattes
+    from stagorix.analysis.matte import write_mattes, write_plate
     from stagorix.assets.sounds import plan_cues
 
     sources = {s.id: inspect_source(s, plan_dir, aspect) for s in plan.sources}
@@ -270,6 +270,7 @@ def build_props(
             "matteDir": "",
             "matteFps": FINAL_FPS,
             "matteFrames": 0,
+            "plate": "",
         }
         if sid in mattes:
             q = MatteQuality.DRAFT if quality is Quality.DRAFT else MatteQuality.FINAL
@@ -281,7 +282,13 @@ def build_props(
                     "Speaker effects, the title behind the speaker and camera moves need them; "
                     "check the network or run inside Docker, where the models are built in."
                 ) from exc
-            entry.update(matteDir=rel(stage_dir / f"{sid}-matte"), matteFps=m.fps, matteFrames=m.frames)
+            plate = write_plate(target, stage_dir / f"{sid}-matte", stage_dir / f"{sid}-plate.jpg")
+            entry.update(
+                matteDir=rel(stage_dir / f"{sid}-matte"),
+                matteFps=m.fps,
+                matteFrames=m.frames,
+                plate=rel(plate),
+            )
         staged[sid] = entry
 
     audio = ""
