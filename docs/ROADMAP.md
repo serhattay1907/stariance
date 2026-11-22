@@ -25,7 +25,7 @@ Stagorix is the open-source video engine of **Stariance**, a growth studio for b
 
 | MVP phase | Dates (est.) | Stagorix tasks | New work |
 | --- | --- | --- | --- |
-| 0 · Hygiene | before A | — | Secret scanning, attribution check, `ASSETS.md`, dependency license check, branch protection (S) |
+| 0 · Hygiene | before A | — | Secret scanning, attribution check, `ASSETS.md`, dependency license check (done in CI); branch protection and GitHub push protection (owner, repository settings) (S) |
 | A · Engine bridge | 23–29 Nov | 3.6 | `Edit` composition (edit plan + footage + cuts + captions → video); aspect ratio as a parameter; renderer interface; time measurement |
 | B · Brand core | 30 Nov–6 Dec | 4.1, 4.3, 8.1 | Profile = personality → style → pack; looks become styles; rule-based edit v0 |
 | C · Brain + assembly | 7–13 Dec | 5.1, 5.5, 5.6, 6.1 | Multi-clip assembly (order, best take, audio/colour matching) |

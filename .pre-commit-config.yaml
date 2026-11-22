@@ -1,0 +1,14 @@
+# Optional local hooks: `pipx install pre-commit && pre-commit install --hook-type pre-commit --hook-type commit-msg`.
+# CI runs the same checks on every pull request, so nothing depends on these being installed.
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.24.2
+    hooks:
+      - id: gitleaks
+  - repo: local
+    hooks:
+      - id: no-ai-attribution
+        name: no AI attribution in the commit message
+        entry: python3 scripts/check_attribution.py --message
+        language: system
+        stages: [commit-msg]

@@ -84,4 +84,5 @@ Stagorix is an open-source, brand-agnostic, multi-agent pipeline that turns news
 - `zod` is pinned to the exact version Remotion depends on; upgrade both together.
 - Media (raw videos, renders, cutouts, models) is never committed. Exceptions: the small golden-test files in `tests/golden/` (frames produced inside Docker, a synthetic speech sample).
 - Personal, local-only notes go in a gitignored `*.local.md` file.
+- CI checks every pull request for secrets (gitleaks, full history), AI tool attribution in commit messages and files (`scripts/check_attribution.py`), dependency licenses (`stagorix licenses`) and an up-to-date `packages/stagorix/ASSETS.md` (`stagorix licenses --write-assets`). The same checks run locally with `pre-commit install --hook-type pre-commit --hook-type commit-msg`.
 - Third-party files are never vendored without a clear, compatible license. Project skills (our own) live in `.agents/skills/<name>/`.

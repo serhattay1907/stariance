@@ -9,6 +9,25 @@ permissions:
   contents: read
 
 jobs:
+  hygiene:
+    name: Hygiene (secrets, attribution)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Secret scan (full history)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: No AI attribution in commits
+        if: github.event_name == 'pull_request'
+        run: python3 scripts/check_attribution.py --commits "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
+      - name: No AI attribution in files
+        run: python3 scripts/check_attribution.py --files
+      - name: Attribution checker tests
+        run: python3 scripts/test_check_attribution.py
+
   checks:
     name: Checks (${{ matrix.os }})
     strategy:
@@ -38,6 +57,10 @@ jobs:
         working-directory: packages/stagorix/render
       - run: npm run typecheck
         working-directory: packages/stagorix/render
+      - name: Dependency licenses (Python and npm)
+        if: runner.os == 'Linux'
+        run: uv run stagorix licenses
+        working-directory: packages/stagorix
 
   golden:
     name: Golden test (Docker, ${{ matrix.arch }})
