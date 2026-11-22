@@ -142,6 +142,41 @@ def showcase(
 
 
 @app.command()
+def licenses(
+    write_assets: Annotated[
+        bool, typer.Option("--write-assets", help="Rewrite ASSETS.md from the catalogs.")
+    ] = False,
+    show_all: Annotated[
+        bool, typer.Option("--all", help="List every dependency, not only problems.")
+    ] = False,
+) -> None:
+    """Check that every installed dependency (Python and npm) has a permissive license."""
+    from stagorix.licenses import ASSETS_FILE, NODE_MODULES, assets_markdown, npm_findings, python_findings
+
+    if write_assets:
+        ASSETS_FILE.write_text(assets_markdown(), encoding="utf-8")
+        console.print(f"Wrote {ASSETS_FILE}")
+    findings = python_findings()
+    if NODE_MODULES.is_dir():
+        findings += npm_findings()
+    else:
+        console.print("[yellow]render/node_modules not found: run `npm ci` in render/ to check npm too[/]")
+    bad = [f for f in findings if not f.ok]
+    table = Table(title=f"Dependency licenses · {len(findings)} packages, {len(bad)} to review")
+    for col in ("Ecosystem", "Package", "Version", "License", "Note"):
+        table.add_column(col)
+    for f in findings if show_all else bad:
+        style = "" if f.ok else "red"
+        table.add_row(f.ecosystem, f.package, f.version, f.license or "(none)", f.note, style=style)
+    if show_all or bad:
+        console.print(table)
+    else:
+        console.print(f"[green]All {len(findings)} dependencies have a permissive or reviewed license.[/]")
+    if bad:
+        raise typer.Exit(code=1)
+
+
+@app.command()
 def looks(
     render: Annotated[bool, typer.Option("--render", help="Render every look into one reel video.")] = False,
     out: Annotated[Path, typer.Option("--out", help="Reel output.")] = Path("workspace/looks.mp4"),
