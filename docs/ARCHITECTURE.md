@@ -47,7 +47,7 @@ flowchart LR
 | Component | Responsibility | Tech |
 | --- | --- | --- |
 | Analysis | Word timings, flub detection, face tracking, person cutout, audio cleanup | faster-whisper, OpenCV, rembg, ffmpeg |
-| Agents | Scout (collect + dedupe), Scorer, Writer (verify/rewrite loop), Editor (edit plan), QA (`qa-frames`) | Python 3.12, Pydantic, LLM adapter; engine exposed as one typed API with an `execute` tool (no LangGraph in the MVP) |
+| Agents | Scout (collect + dedupe), Scorer, Writer (verify/rewrite loop), Editor (edit plan), QA (`qa-frames`) | Python 3.12, Pydantic, LLM adapter; structured output against the `EditPlan` schema, `check_plan` gate and bounded retries (no LangGraph in the MVP) |
 | LLM adapters | One interface; Claude Code CLI, Anthropic API, OpenAI API, Ollama behind it | Provider-agnostic |
 | Render | Edit plan → video; effects and layouts as typed components | Remotion, Three.js, Zod |
 | Assets | Own files first, then free stock; license log for every asset; paid generators off by default | Pexels, Pixabay, Mixkit, LottieFiles |

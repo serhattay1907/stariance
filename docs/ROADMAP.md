@@ -136,7 +136,7 @@ After the option review gate, requests stay open for good: each wish becomes a n
 
 ## Phase 5 — Agents
 
-- [ ] 5.1 LLM adapters (C); the engine is exposed to agents as one typed API with a single `execute` tool
+- [ ] 5.1 LLM adapters (C); plans come back as structured output against the `EditPlan` schema and pass `check_plan` before approval
 - [ ] 5.2 Scout + deduplication (C), source list (S)
 - [ ] 5.3 Scorer (C), score approval on 20 samples (S)
 - [ ] 5.4 Writer + verify/rewrite loop (C), tone approval (S)
