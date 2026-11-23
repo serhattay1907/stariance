@@ -38,6 +38,8 @@ Later: 3.5b, 4.4, phase 7, 9, 10, 11, 13. Dropped from the MVP: news agents 5.2â
 
 Ideas from the source review (project docs, not scheduled): plan file with storyboard timings and beat-aligned cuts, sound metadata for automatic sound choice (brightness, high-frequency risk, transient), music beat analysis, model router with a semantic cache, trend research for Insight, a product or site launch pack.
 
+Growth knowledge layer (after the MVP, guardrails in DECISIONS 2026-11-23): pattern cards from leading brands (sector, personality fit, evidence level, source), trend signals behind a `TrendSource` adapter, a brand competency check with the two weakest areas and the module that addresses each, and a sources footnote on every recommendation.
+
 ## Milestones
 
 | Milestone | What the user gets | Done when |
@@ -195,7 +197,7 @@ After the option review gate, requests stay open for good: each wish becomes a n
 
 ## Phase 12 â€” Open source and CV
 
-- [ ] 12.0 Gate: macOS install test from 2.8 passes (S); renderer review: Remotion license for companies vs. HyperFrames (Apache-2.0) maturity, decide whether to add or switch (C)
+- [ ] 12.0 Gate: macOS install test from 2.8 passes (S); renderer study (DECISIONS 2026-11-23): layered hybrid vs. Revideo vs. HyperFrames against the Remotion company license, decide whether to add or switch (C)
 - [ ] 12.1 README, screenshots, demo GIF (C, GIF S)
 - [ ] 12.2 Scoring evaluation report (C)
 - [ ] 12.3 DaVinci export, optional (C)
