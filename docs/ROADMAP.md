@@ -26,19 +26,19 @@ Stagorix is the open-source video engine of **Stariance**, a growth studio for b
 | MVP phase | Dates (est.) | Stagorix tasks | New work |
 | --- | --- | --- | --- |
 | 0 · Hygiene | before A | — | Secret scanning, attribution check, `ASSETS.md`, dependency license check, branch protection (S) |
-| A · Engine bridge | 23–29 Nov | 3.6 | `Edit` composition (edit plan + footage + cuts + captions → video); aspect ratio as a parameter; renderer interface; time measurement |
-| B · Brand core | 30 Nov–6 Dec | 4.1, 4.3, 8.1 | Profile = personality → style → pack; looks become styles; rule-based edit v0 |
-| C · Brain + assembly | 7–13 Dec | 5.1, 5.5, 5.6, 6.1 | Multi-clip assembly (order, best take, audio/colour matching) |
+| A · Engine bridge | 23–29 Nov | 3.6 | `Edit` composition (edit plan + footage + cuts + captions → video); aspect ratio as a parameter; renderer interface; time measurement; cut candidates snap to sentence ends and pauses |
+| B · Brand core | 30 Nov–6 Dec | 4.1, 4.3, 8.1 | Profile = personality → style → pack, at most five required fields (name, offer, audience, main goal, channels); looks become styles; distinctive-asset palette with a maturity stage (building → established); rule-based edit v0 |
+| C · Brain + assembly | 7–13 Dec | 5.1, 5.5, 5.6, 6.1 | Multi-clip assembly (order, best take, audio/colour matching); run logs and an edit-rate-before-approval metric; a sources footnote on every recommendation (`references.yaml`) |
 | D · Format range | 14–20 Dec | 8.2, 8.4 | 16:9 (three base layouts first, own safe area), cover image (strongest settled frame, also placed at frame 0), share text (1–3 sentences) |
-| E · App layer | 21–27 Dec | 4.2, 6.2–6.4 | In `apps/stariance/`: wizard, pack recommendation, approval, preview, before/after, basic Insight |
-| F · Quality and release | 28–31 Dec | 4.6, 8.5, 12.1 | First pack set (~10 styles), 12 format cards, quality gates v1 with a quality report, Docker install, demo |
-| R · Research (parallel) | 30 Nov–20 Dec | 5.8 (narrowed) | 12 format cards with data, brand growth rules |
+| E · App layer | 21–27 Dec | 4.2, 6.2–6.4 | In `apps/stariance/`: wizard, foundation checklist with a rule-based competency check (gaps never block the first video: no logo → distinctive-asset picker with a wordmark in a bundled font; unclear audience → three past-behaviour questions that yield category entry points), pack recommendation, approval, phone-size preview, before/after, progress bar, empty states, basic Insight; each flow passes an owner experience test before release |
+| F · Quality and release | 28–31 Dec | 4.6, 8.5, 12.1 | First pack set (~10 styles), 12 format cards, 12 pattern cards (no brand names), brand consistency score v0, quality gates v1 with a quality report, Docker install, demo |
+| R · Research (parallel) | 30 Nov–20 Dec | 5.8 (narrowed) | 12 format cards with data, 12 pattern cards, brand growth rules; pilot with 3–5 brands (Wizard-of-Oz, five-question interviews) |
 
 Later: 3.5b, 4.4, phase 7, 9, 10, 11, 13. Dropped from the MVP: news agents 5.2–5.4. The counts under Option targets are upper bounds for later releases, not goals: the MVP aims at quality (12 core formats, about 10 crafted styles).
 
 Ideas from the source review (project docs, not scheduled): plan file with storyboard timings and beat-aligned cuts, sound metadata for automatic sound choice (brightness, high-frequency risk, transient), music beat analysis, model router with a semantic cache, trend research for Insight, a product or site launch pack.
 
-Growth knowledge layer (after the MVP, guardrails in DECISIONS 2026-11-23): pattern cards from leading brands (sector, personality fit, evidence level, source), trend signals behind a `TrendSource` adapter, a brand competency check with the two weakest areas and the module that addresses each, and a sources footnote on every recommendation.
+Growth knowledge layer after the MVP (guardrails in DECISIONS 2026-11-23): pattern cards that name leading brands (sector, personality fit, evidence level, source) and trend signals behind a `TrendSource` adapter (v1: Google Trends API once the alpha is granted, Pinterest Trends, Amazon Brand Analytics for a connected brand; link-out: TikTok Creative Center, Meta Ad Library, YouTube most-popular chart). The MVP ships only the light parts listed in phases C, E and F.
 
 ## Milestones
 
